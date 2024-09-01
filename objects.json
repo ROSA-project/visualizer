@@ -1,0 +1,24 @@
+{
+    "0": {
+        "shape": {
+            "type": "Cube",
+            "params": {
+                "length": 3,
+                "height": 3,
+                "width": 3
+            }
+        },
+        "parent_object_id": null,
+        "children_object_ids": []
+    },
+    "1": {
+        "shape": {
+            "type": "Sphere",
+            "params": {
+                "radius": 3
+            }
+        },
+        "parent_object_id": null,
+        "children_object_ids": []
+    }
+}
