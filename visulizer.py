@@ -17,8 +17,17 @@ def generate_cube_vertices(center, length, height, width):
     l, h, w = length / 2, height / 2, width / 2
     vertices = np.array([[l, h, w], [l, h, -w], [l, -h, -w], [l, -h, w],
                          [-l, h, w], [-l, h, -w], [-l, -h, -w], [-l, -h, w]])
-    vertices += np.array(center)
     return vertices
+
+# Function to plot local coordinate axes on each object
+def coord_system(ax, position, orientation, length=6):
+    r = R.from_quat(orientation, scalar_first=True)
+    
+    axes = np.eye(3) * length
+    axes_rotated = r.apply(axes)
+
+    for axis, color in zip(axes_rotated, ['r', 'g', 'b']):
+        ax.quiver(*position, *axis, color=color, lw=2)
 
 # Function to plot a cube
 def plot_cube(ax, vertices, color='b'):
@@ -44,9 +53,9 @@ def apply_rotation(vertices, orientation):
 # Initialize the 3D plot
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.set_xlim([0, 30])
-ax.set_ylim([0, 30])
-ax.set_zlim([0, 30])
+ax.set_xlim([-10, 30])
+ax.set_ylim([-10, 30])
+ax.set_zlim([-10, 30])
 
 # Extract object shapes and parameters from objects.json
 object_shapes = {}
@@ -58,9 +67,9 @@ for obj_id, obj_data in objects_data.items():
 # Function to update the plot for each frame of the animation
 def update(frame):
     ax.cla()
-    ax.set_xlim([0, 30])
-    ax.set_ylim([0, 30])
-    ax.set_zlim([0, 30])
+    ax.set_xlim([-10, 30])
+    ax.set_ylim([-10, 30])
+    ax.set_zlim([-10, 30])
     
     timestep = list(simulation_data.keys())[frame]
     timestep_data = simulation_data[timestep]
@@ -76,18 +85,19 @@ def update(frame):
             height = params['height']
             width = params['width']
             vertices = generate_cube_vertices(position, length, height, width)
-            rotated_vertices = apply_rotation(vertices - position, orientation) + position
-            plot_cube(ax, rotated_vertices)
+            rotated_vertices = apply_rotation(vertices, orientation) + np.array(position)
+            plot_cube(ax, rotated_vertices, color='b')
+            coord_system(ax, position, orientation)
         
         elif shape_type == 'Sphere':
             radius = params['radius']
             plot_sphere(ax, position, radius)
+            coord_system(ax, position, orientation)
 
 # Number of frames is equal to the number of timesteps in simulation_data
 num_frames = len(simulation_data)
 
 # Create the animation
-ani = FuncAnimation(fig, update, frames=num_frames, interval=1000, repeat=False)
-
+ani = FuncAnimation(fig, update, frames=num_frames, interval=1000/60, repeat=False)
 
 plt.show()
