@@ -37,7 +37,7 @@ def plot_sphere(ax, center, radius, color='g'):
 
 # Function to apply quaternion rotation to the vertices of a cube
 def apply_rotation(vertices, orientation):
-    r = R.from_quat(orientation)
+    r = R.from_quat(orientation , scalar_first=True)
     rotated_vertices = r.apply(vertices)
     return rotated_vertices
 
