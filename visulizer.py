@@ -4,12 +4,21 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from matplotlib.animation import FuncAnimation
 from scipy.spatial.transform import Rotation as R
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('objects_info', type=str, help='JSON file having objects information')
+parser.add_argument('sim_nonuniform', type=str, help='JSON file having object states at original possibly non-uniform time instances')
+
+# Parse the arguments
+args = parser.parse_args()
 
 # Load the JSON data from files
-with open('objects.json', 'r') as f:
+with open(args.objects_info, 'r') as f:
     objects_data = json.load(f)
 
-with open('simulation.json', 'r') as f:
+with open(args.sim_nonuniform, 'r') as f:
     simulation_data = json.load(f)
 
 # Function to generate vertices of a cube
